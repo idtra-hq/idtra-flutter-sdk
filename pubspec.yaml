@@ -1,8 +1,8 @@
 name: idtra_biometrics_sdk
 description: Official Flutter SDK for Idtra Biometric Face Verification, Active Liveness Detection, and Government NIN/BVN KYC Match.
-version: 1.0.0
+version: 2.0.0
 homepage: https://idtra.com/docs#biometrics
-repository: https://github.com/idtra/idtra-flutter-sdk
+repository: https://github.com/idtra-hq/idtra-flutter-sdk
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -13,17 +13,9 @@ dependencies:
     sdk: flutter
   camera: ^0.10.5+9
   http: ^1.2.0
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-
-flutter:
-  plugin:
-    platforms:
-      android:
-        package: com.idtra.biometrics
-        pluginClass: IdtraBiometricsPlugin
-      ios:
-        pluginClass: IdtraBiometricsPlugin

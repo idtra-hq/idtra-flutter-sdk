@@ -3,15 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'src/idtra_camera_view.dart';
 import 'src/models/verification_result.dart';
+import 'src/session.dart';
+
+export 'src/models/verification_result.dart';
+export 'src/session.dart' show IdtraSessionResult;
 
 /// Idtra Biometrics Main Controller
 class IdtraBiometrics {
   static const String _defaultBaseUrl = 'https://idtra.com';
 
+  /// Recommended (v2). Your SERVER creates the session with your secret key
+  /// (POST https://idtra.com/api/biometrics/session/create) and passes only the returned `verification_url` to the
+  /// app. This opens Idtra's hosted live check (blink + head turn + face match) in an in-app browser and returns
+  /// when the session finishes. The result holds the state only; read the full result on your server
+  /// (GET /api/biometrics/session/{id}/result) or receive it on your webhook.
+  static Future<IdtraSessionResult> verifySession({
+    required String verificationUrl,
+    Duration timeout = const Duration(minutes: 15),
+  }) =>
+      IdtraSessionRunner(verificationUrl, timeout: timeout).run();
+
+  /// Deprecated: needs your secret API key inside the app, where anyone can extract it. Use [verifySession].
+  ///
   /// Start the live camera face verification workflow.
   /// 
   /// Displays a customized oval camera overlay with interactive liveness challenges.
   /// Captures verified selfie and compares against official NIMC / BVN record.
+  @Deprecated('Exposes your secret key in the app. Create a session on your server and use verifySession().')
   static Future<IdtraVerificationResult?> startVerification({
     required BuildContext context,
     required String apiKey,
@@ -37,7 +55,9 @@ class IdtraBiometrics {
     );
   }
 
-  /// Direct API Call: Compare base64 image against official record without UI
+  /// Direct API Call: Compare base64 image against official record without UI.
+  /// Server-side only: never ship your secret key inside an app.
+  @Deprecated('Call the REST API from your server instead; never ship your secret key inside an app.')
   static Future<IdtraVerificationResult> directVerify({
     required String apiKey,
     required String serviceType,
